@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>LoveFinder • Projeto Educativo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ff5f8f, #6a5cff);
+    color: #fff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.card {
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: #00ffcc;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ddb5;
+}
+
+.results {
+    margin-top: 25px;
+}
+
+.result-item {
+    background: rgba(255,255,255,0.2);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.found {
+    background: #00ff99;
+    color: #000;
+}
+
+.not-found {
+    background: #ffb3b3;
+    color: #000;
+}
+
+.footer {
+    margin-top: 40px;
+    font-size: 13px;
+    opacity: 0.85;
+    text-align: center;
+}
+a {
+    color: #00ffcc;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>💘 LoveFinder</h1>
+        <p class="subtitle">
+            Projeto educacional e interativo para conscientização digital.<br>
+            <strong>Não invade contas • Apenas simulação e dados públicos</strong>
+        </p>
+
+        <input type="text" id="query" placeholder="Digite nome, apelido ou e-mail">
+
+        <button onclick="buscar()">🔍 Procurar nos sites</button>
+
+        <div class="results" id="results"></div>
+
+        <div class="footer">
+            ⚠️ Projeto acadêmico / entretenimento • LGPD • Dados públicos<br>
+            Nenhuma informação é armazenada.
+        </div>
+    </div>
+</div>
+
+<script>
+const sites = [
+    { name: "Tinder", domain: "tinder.com" },
+    { name: "Badoo", domain: "badoo.com" },
+    { name: "Happn", domain: "happn.com" },
+    { name: "Plenty of Fish", domain: "pof.com" },
+    { name: "OkCupid", domain: "okcupid.com" }
+];
+
+function buscar() {
+    const query = document.getElementById("query").value.trim();
+    const resultsDiv = document.getElementById("results");
+
+    resultsDiv.innerHTML = "";
+
+    if (!query) {
+        resultsDiv.innerHTML = "<p>❌ Digite algo para pesquisar.</p>";
+        return;
+    }
+
+    sites.forEach(site => {
+        const encontrado = Math.random() > 0.5; // Simulação divertida
+        const badgeClass = encontrado ? "found" : "not-found";
+        const badgeText = encontrado ? "Possível perfil público" : "Não encontrado";
+        const googleLink = `https://www.google.com/search?q=site:${site.domain}+${encodeURIComponent(query)}`;
+
+        const div = document.createElement("div");
+        div.className = "result-item";
+        div.innerHTML = `
+            <strong>${site.name}</strong><br>
+            <span class="badge ${badgeClass}">${badgeText}</span><br><br>
+            🔗 <a href="${googleLink}" target="_blank">Pesquisar dados públicos</a>
+        `;
+
+        resultsDiv.appendChild(div);
+    });
+}
+</script>
+
+</body>
+</html>
