@@ -2,42 +2,40 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>LoveFinder • Projeto Educativo</title>
+<title>LoveFinder Plus • Encontre Quem Está Te Traindo.</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #ff5f8f, #6a5cff);
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #ff4d6d, #5f27cd);
     color: #fff;
 }
 
 .container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: auto;
     padding: 30px;
 }
 
 .card {
     background: rgba(255,255,255,0.15);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    border-radius: 18px;
+    padding: 30px;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 10px;
 }
 
 .subtitle {
     text-align: center;
     opacity: 0.9;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
-input {
+input, select {
     width: 100%;
     padding: 14px;
     border-radius: 10px;
@@ -80,13 +78,13 @@ button:hover {
     font-weight: bold;
 }
 
-.found {
-    background: #00ff99;
+.simulado {
+    background: #ffd166;
     color: #000;
 }
 
-.not-found {
-    background: #ffb3b3;
+.link {
+    background: #06d6a0;
     color: #000;
 }
 
@@ -96,70 +94,101 @@ button:hover {
     opacity: 0.85;
     text-align: center;
 }
+
 a {
     color: #00ffcc;
 }
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+}
 </style>
 </head>
-
 <body>
 
 <div class="container">
-    <div class="card">
-        <h1>💘 LoveFinder</h1>
-        <p class="subtitle">
-            Projeto educacional e interativo para conscientização digital.<br>
-            <strong>Não invade contas • Apenas simulação e dados públicos</strong>
-        </p>
+  <div class="card">
+    <h1>💘 LoveFinder Plus</h1>
+    <p class="subtitle">
+      Plataforma educacional e interativa para pesquisa de presença digital.<br>
+      <strong>Resultados simulados + links públicos reais</strong>
+    </p>
 
-        <input type="text" id="query" placeholder="Digite nome, apelido ou e-mail">
+    <input type="text" id="nome" placeholder="Nome ou apelido">
+    <input type="email" id="email" placeholder="E-mail (opcional)">
 
-        <button onclick="buscar()">🔍 Procurar nos sites</button>
+    <select id="pais">
+      <option value="">País (opcional)</option>
+      <option>Brasil</option>
+      <option>Portugal</option>
+      <option>Estados Unidos</option>
+      <option>Outro</option>
+    </select>
 
-        <div class="results" id="results"></div>
-
-        <div class="footer">
-            ⚠️ Projeto acadêmico / entretenimento • LGPD • Dados públicos<br>
-            Nenhuma informação é armazenada.
-        </div>
+    <h3>🔎 Onde pesquisar</h3>
+    <div class="checkbox-group">
+      <label><input type="checkbox" value="tinder.com" checked> Tinder</label>
+      <label><input type="checkbox" value="badoo.com" checked> Badoo</label>
+      <label><input type="checkbox" value="happn.com"> Happn</label>
+      <label><input type="checkbox" value="okcupid.com"> OkCupid</label>
+      <label><input type="checkbox" value="pof.com"> POF</label>
+      <label><input type="checkbox" value="facebook.com"> Facebook</label>
+      <label><input type="checkbox" value="instagram.com"> Instagram</label>
     </div>
+
+    <button onclick="buscar()">🔍 Pesquisar Pessoas</button>
+
+    <div class="results" id="results"></div>
+
+    <div class="footer">
+      ⚠️ Projeto acadêmico e de entretenimento • LGPD • OSINT<br>
+      Não confirma identidade • Não acessa dados privados
+    </div>
+  </div>
 </div>
 
 <script>
-const sites = [
-    { name: "Tinder", domain: "tinder.com" },
-    { name: "Badoo", domain: "badoo.com" },
-    { name: "Happn", domain: "happn.com" },
-    { name: "Plenty of Fish", domain: "pof.com" },
-    { name: "OkCupid", domain: "okcupid.com" }
-];
-
 function buscar() {
-    const query = document.getElementById("query").value.trim();
-    const resultsDiv = document.getElementById("results");
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const checks = document.querySelectorAll('input[type=checkbox]:checked');
+    const results = document.getElementById('results');
 
-    resultsDiv.innerHTML = "";
+    results.innerHTML = '';
 
-    if (!query) {
-        resultsDiv.innerHTML = "<p>❌ Digite algo para pesquisar.</p>";
+    if (!nome && !email) {
+        results.innerHTML = '<p>❌ Informe pelo menos um nome ou e-mail.</p>';
         return;
     }
 
-    sites.forEach(site => {
-        const encontrado = Math.random() > 0.5; // Simulação divertida
-        const badgeClass = encontrado ? "found" : "not-found";
-        const badgeText = encontrado ? "Possível perfil público" : "Não encontrado";
-        const googleLink = `https://www.google.com/search?q=site:${site.domain}+${encodeURIComponent(query)}`;
+    if (checks.length === 0) {
+        results.innerHTML = '<p>❌ Selecione ao menos um site.</p>';
+        return;
+    }
 
-        const div = document.createElement("div");
-        div.className = "result-item";
+    checks.forEach(check => {
+        const domain = check.value;
+        const query = encodeURIComponent(nome || email);
+        const google = `https://www.google.com/search?q=site:${domain}+${query}`;
+        const simulado = Math.random() > 0.4 ? 'Possível correspondência pública' : 'Nenhum dado público encontrado';
+
+        const div = document.createElement('div');
+        div.className = 'result-item';
         div.innerHTML = `
-            <strong>${site.name}</strong><br>
-            <span class="badge ${badgeClass}">${badgeText}</span><br><br>
-            🔗 <a href="${googleLink}" target="_blank">Pesquisar dados públicos</a>
+          <strong>${domain}</strong><br>
+          <span class="badge simulado">${simulado}</span><br><br>
+          <span class="badge link">Link público</span><br>
+          🔗 <a href="${google}" target="_blank">Abrir pesquisa no Google</a>
         `;
 
-        resultsDiv.appendChild(div);
+        results.appendChild(div);
     });
 }
 </script>
